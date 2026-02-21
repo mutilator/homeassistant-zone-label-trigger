@@ -1,0 +1,22 @@
+zone_label:
+  target:
+    entity:
+      - domain: [zone]
+  fields:
+    entity_id:
+      required: true
+      selector:
+        entity:
+          multiple: true
+          domain: [person, device_tracker]
+    event:
+      required: true
+      selector:
+        select:
+          options:
+            - value: enter
+              label: Enter
+            - value: exit
+              label: Exit
+            - value: both
+              label: Both

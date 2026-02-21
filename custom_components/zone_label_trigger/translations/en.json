@@ -1,0 +1,38 @@
+{
+  "component": {
+    "zone_label_trigger": {
+      "triggers": {
+        "zone_label": {
+          "name": "Zone Trigger",
+          "description": "Trigger when an entity enters or exits a zone with a matching label."
+        }
+      }
+    }
+  },
+  "triggers": {
+    "zone_label": {
+      "name": "Zone Trigger",
+      "description": "Trigger when an entity enters or exits a zone with a matching label.",
+      "fields": {
+        "entity_id": {
+          "name": "Entity to watch",
+          "description": "The person or device to monitor for entering/exiting the labeled zones.",
+          "selector": { "entity": { "domain": ["person", "device_tracker"] } }
+        },
+        "event": {
+          "name": "Event",
+          "description": "Trigger on entities entering, exiting, or both.",
+          "selector": {
+            "select": {
+              "options": [
+                { "value": "enter", "label": "Enter" },
+                { "value": "exit", "label": "Exit" },
+                { "value": "both", "label": "Both" }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

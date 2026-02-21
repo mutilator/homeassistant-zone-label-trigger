@@ -1,0 +1,9 @@
+{
+  "domain": "zone_label_trigger",
+  "name": "Zone Label Trigger",
+  "documentation": "https://github.com/mutilator/zone_label_trigger",
+  "version": "0.1.0",
+  "integration_type": "hub",
+  "requirements": [],
+  "codeowners": []
+}

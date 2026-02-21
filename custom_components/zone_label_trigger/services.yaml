@@ -1,0 +1,10 @@
+move_tracker_to_zone:
+  fields:
+    zone:
+      selector:
+        entity:
+          domain: [zone]
+    entity_id:
+      selector:
+        entity:
+          domain: [device_tracker]
