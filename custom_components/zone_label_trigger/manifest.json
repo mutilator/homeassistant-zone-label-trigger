@@ -1,8 +1,9 @@
 {
   "domain": "zone_label_trigger",
   "name": "Zone Label Trigger",
-  "documentation": "https://github.com/mutilator/zone_label_trigger",
-  "version": "0.1.0",
+  "documentation": "https://github.com/mutilator/homeassistant-zone-label-trigger",
+  "issue_tracker": "https://github.com/mutilator/homeassistant-zone-label-trigger/issues",
+  "version": "1.0.0",
   "integration_type": "hub",
   "requirements": [],
   "codeowners": []

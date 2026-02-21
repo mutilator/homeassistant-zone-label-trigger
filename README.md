@@ -5,11 +5,11 @@
      style="float: right; margin: 10px 0px 20px 20px;" />
 <br/>
 
-[![GitHub release](https://img.shields.io/github/release/mutilator/ZoneGroups.svg)](https://github.com/mutilator/ZoneGroups/releases)
+[![GitHub release](https://img.shields.io/github/release/mutilator/homeassistant-zone-label-trigger.svg)](https://github.com/mutilator/homeassistant-zone-label-trigger/releases)
 
-# ZoneGroups
+# Zone Label Trigger
 
-`ZoneGroups` is a repository containing a **custom Home Assistant integration** named **Zone Label Trigger**.  It provides a new automation trigger platform called `zone_label` which lets you watch people or device trackers as they enter or exit zones that share a common label.  Labels are managed by Home Assistant's entity/zone registries and make it easy to group arbitrary zones (work, home, school, etc.) without hard‑coding entity IDs.
+This repository contains a **custom Home Assistant integration** named **Zone Label Trigger**.  It provides a new automation trigger platform called `zone_label` which lets you watch people or device trackers as they enter or exit zones that share a common label.  Labels are managed by Home Assistant's entity/zone registries and make it easy to group arbitrary zones (work, home, school, etc.) without hard‑coding entity IDs.
 
 ## Features
 
@@ -59,23 +59,29 @@ trigger:
 
 ## Installation
 
+### Via HACS (Recommended)
+
+1. Open HACS in Home Assistant
+2. Click "Custom repositories" in the top right
+3. Add this repository:
+   - **Repository URL**: `https://github.com/mutilator/homeassistant-zone-label-trigger`
+   - **Category**: Integration
+4. Click "Install"
+5. In Home Assistant, go to **Settings > Devices & Services**
+6. Click **Create Automation** and search for "Clockwork"
+7. Follow the setup wizard
+
 ### Manual installation
 
 1. Download or clone this repository.
 2. Copy the `custom_components/zone_label_trigger` directory into your
    Home Assistant `custom_components/` folder:
    ```
-   cp -r ZoneGroups/custom_components/zone_label_trigger \
+   cp -r homeassistant-zone-label-trigger/custom_components/zone_label_trigger \
      ~/.homeassistant/custom_components/
    ```
 3. Restart Home Assistant.
 4. Create automations using the `zone_label` trigger in the UI or YAML.
-
-### HACS (custom repository)
-
-This integration can be added to HACS as a custom repository under the
-"Integration" category.  Use the same repository URL as above.  Once added,
-install it through HACS and restart Home Assistant.
 
 ## Development
 
@@ -84,8 +90,7 @@ Follow the general Home Assistant custom component development workflow:
 
 1. Activate the Python virtual environment used for testing:
    ```bash
-   source /mnt/h/projects/ha-python-venv/bin/activate
-   cd /mnt/h/projects/ZoneGroups
+   source venv/bin/activate
    ```
 2. Install any dependencies (none required beyond `homeassistant` itself).
 3. Run the tests:
@@ -94,8 +99,6 @@ Follow the general Home Assistant custom component development workflow:
    # or run only the trigger tests
    python3 -m pytest tests/test_zone_label_trigger.py -k zone_label -v
    ```
-4. Refer to the `ref/` files for guides on custom triggers and automation editor
-   schema.
 
 > **Testing tip:** give pytest a timeout of at least 120 seconds; the HA test
 > fixtures take a moment to initialize.
@@ -103,7 +106,7 @@ Follow the general Home Assistant custom component development workflow:
 ## Repository Layout
 
 ```
-ZoneGroups/
+/
 ├── custom_components/zone_label_trigger/  # integration implementation
 │   ├── __init__.py
 │   ├── trigger.py                # core trigger logic
