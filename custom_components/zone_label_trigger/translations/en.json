@@ -6,8 +6,7 @@
       "fields": {
         "entity_id": {
           "name": "Entity to watch",
-          "description": "The person or device to monitor for entering/exiting the labeled zones.",
-          "selector": { "entity": { "domain": ["person", "device_tracker"] } }
+          "description": "The person or device to monitor for entering/exiting the labeled zones."
         },
         "event": {
           "name": "Event",
