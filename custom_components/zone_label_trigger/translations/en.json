@@ -12,12 +12,12 @@
           "name": "Event",
           "description": "Trigger on entities entering, exiting, or both.",
           "selector": {
-            "select": {
-              "options": [
-                { "value": "enter", "label": "Enter" },
-                { "value": "exit", "label": "Exit" },
-                { "value": "both", "label": "Both" }
-              ]
+            "event": {
+              "options": {
+                "enter": "Enter",
+                "exit": "Exit",
+                "both": "Both"
+              }
             }
           }
         }
