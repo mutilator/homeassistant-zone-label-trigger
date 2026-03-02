@@ -1,14 +1,4 @@
 {
-  "component": {
-    "zone_label_trigger": {
-      "triggers": {
-        "zone_label": {
-          "name": "Zone Trigger",
-          "description": "Trigger when an entity enters or exits a zone with a matching label."
-        }
-      }
-    }
-  },
   "triggers": {
     "zone_label": {
       "name": "Zone Trigger",
