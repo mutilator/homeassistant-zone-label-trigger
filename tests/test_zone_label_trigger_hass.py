@@ -305,8 +305,7 @@ async def test_validate_trigger_config_accepts_options_wrapped_fields(hass):
     """Ensure validator accepts trigger fields wrapped inside `options`.
 
     The Automation Editor may send trigger fields under `options` for the
-    class-style Trigger API. This test mirrors the Clockwork fix you
-    mentioned: accept options-wrapped fields and validate them correctly.
+    class-style Trigger API.
     """
     from homeassistant.helpers import trigger as trigger_helper
 
@@ -317,15 +316,15 @@ async def test_validate_trigger_config_accepts_options_wrapped_fields(hass):
     wrapped = {
         "target": {
             "label_id": ["shopping", "aldi"],
-            "entity_id": ["zone.meijer_whitelake", "zone.standish_casino"],
+            "entity_id": ["zone.my_store", "zone.my_casino"],
         },
-        "options": {"entity_id": ["person.scott", "person.christina"], "event": "enter"},
+        "options": {"entity_id": ["person.joe", "person.jane"], "event": "enter"},
     }
     validated = await ZoneLabelTrigger.async_validate_config(hass, wrapped)
 
     # Validator must preserve the `target` and the `options` payload
     assert "options" in validated
-    assert validated["options"]["entity_id"] == ["person.scott", "person.christina"]
+    assert validated["options"]["entity_id"] == ["person.joe", "person.jane"]
     assert validated["options"]["event"] == "enter"
     assert "target" in validated
     assert validated["target"]["label_id"] == ["shopping", "aldi"]
@@ -339,9 +338,9 @@ async def test_validate_trigger_config_accepts_options_wrapped_fields(hass):
     assert validated_zone["target"]["entity_id"] == ["zone.work"]
 
     # top-level (YAML) shape: target + entity_id + event is still accepted
-    top = {"target": {"label_id": ["shopping"]}, "entity_id": ["person.scott"], "event": "enter"}
+    top = {"target": {"label_id": ["shopping"]}, "entity_id": ["person.joe"], "event": "enter"}
     validated2 = await ZoneLabelTrigger.async_validate_config(hass, top)
-    assert validated2["entity_id"] == ["person.scott"]
+    assert validated2["entity_id"] == ["person.joe"]
     assert validated2["event"] == "enter"
     assert "target" in validated2
     assert validated2["target"]["label_id"] == ["shopping"]
@@ -355,18 +354,18 @@ async def test_class_style_exact_schema_triggers(hass):
     # create explicit zones and set their label attributes
     from homeassistant.helpers import label_registry as lr, entity_registry as er
     ent_reg = er.async_get(hass)
-    e1 = ent_reg.async_get_or_create("zone", "test", "meijer_whitelake", suggested_object_id="meijer_whitelake")
-    e2 = ent_reg.async_get_or_create("zone", "test", "standish_casino", suggested_object_id="standish_casino")
-    hass.states.async_set("zone.meijer_whitelake", "zone", {"friendly_name": "Meijer"})
-    hass.states.async_set("zone.standish_casino", "zone", {"friendly_name": "Standish Casino"})
+    e1 = ent_reg.async_get_or_create("zone", "test", "my_store", suggested_object_id="my_store")
+    e2 = ent_reg.async_get_or_create("zone", "test", "my_casino", suggested_object_id="my_casino")
+    hass.states.async_set("zone.my_store", "zone", {"friendly_name": "Meijer"})
+    hass.states.async_set("zone.my_casino", "zone", {"friendly_name": "Standish Casino"})
     label_shopping = lr.async_get(hass).async_create("shopping")
     label_aldi = lr.async_get(hass).async_create("aldi")
     ent_reg.async_update_entity(e1.entity_id, labels=[label_shopping.label_id])
     ent_reg.async_update_entity(e2.entity_id, labels=[label_aldi.label_id])
 
     # monitored persons start outside
-    hass.states.async_set("person.scott", "not_home")
-    hass.states.async_set("person.christina", "not_home")
+    hass.states.async_set("person.joe", "not_home")
+    hass.states.async_set("person.jane", "not_home")
 
     calls = []
 
@@ -376,23 +375,23 @@ async def test_class_style_exact_schema_triggers(hass):
     cfg = {
         "target": {
             "label_id": ["shopping", "aldi"],
-            "entity_id": ["zone.meijer_whitelake", "zone.standish_casino"],
+            "entity_id": ["zone.my_store", "zone.my_casino"],
         },
-        "options": {"entity_id": ["person.scott", "person.christina"], "event": "enter"},
+        "options": {"entity_id": ["person.joe", "person.jane"], "event": "enter"},
     }
 
     unsub = await zlt.async_attach_trigger(hass, cfg, _action)
 
-    # scott enters explicit zone -> fires
-    hass.states.async_set("person.scott", "meijer_whitelake")
+    # joe enters explicit zone -> fires
+    hass.states.async_set("person.joe", "my_store")
     await hass.async_block_till_done()
     assert len(calls) == 1
-    assert calls[0]["trigger"]["entity_id"] == "person.scott"
-    assert calls[0]["trigger"]["zone"] == "zone.meijer_whitelake"
+    assert calls[0]["trigger"]["entity_id"] == "person.joe"
+    assert calls[0]["trigger"]["zone"] == "zone.my_store"
     assert calls[0]["trigger"]["event"] == "enter"
 
-    # christina enters via label match -> fires
-    hass.states.async_set("person.christina", "standish_casino")
+    # jane enters via label match -> fires
+    hass.states.async_set("person.jane", "my_casino")
     await hass.async_block_till_done()
     assert len(calls) == 2
 
@@ -484,4 +483,4 @@ async def test_async_attach_trigger_rejects_missing_target(hass):
         calls.append(run_vars)
 
     with pytest.raises(vol.Invalid):
-        await zlt.async_attach_trigger(hass, {"platform": "zone_label", "entity_id": "person.scott", "event": "both"}, _action)
+        await zlt.async_attach_trigger(hass, {"platform": "zone_label", "entity_id": "person.joe", "event": "both"}, _action)

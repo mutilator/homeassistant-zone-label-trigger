@@ -266,7 +266,7 @@ async def async_attach_trigger(hass: HomeAssistant, config, action: Callable, va
     `options.entity_id` for person/device entities). Examples supported:
 
       - legacy: {"label": "Work", "entity_id": "device_tracker.alice"}
-      - class-style: {"target": {"label_id": ["shopping"]}, "options": {"entity_id": ["person.scott"], "event": "enter"}}
+      - class-style: {"target": {"label_id": ["shopping"]}, "options": {"entity_id": ["person.joe"], "event": "enter"}}
 
     Behavior:
     - `target.label_id` selects which zones to match.

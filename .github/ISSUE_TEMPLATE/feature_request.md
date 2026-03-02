@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest an idea for Clockwork
+about: Suggest an idea for homeassistant-zone-label-trigger
 title: "[FEATURE] "
 labels: enhancement
 assignees: ''

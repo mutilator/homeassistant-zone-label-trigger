@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a bug in Clockwork
+about: Report a bug in homeassistant-zone-label-trigger
 title: "[BUG] "
 labels: bug
 assignees: ''
@@ -24,7 +24,7 @@ What actually happened instead.
 
 ## Environment
 - **Home Assistant Version**: [e.g., 2024.1.0]
-- **Clockwork Version**: [e.g., 1.0.0]
+- **homeassistant-zone-label-trigger Version**: [e.g., 1.0.0]
 - **Installation Method**: [HACS / Manual]
 - **Python Version**: [e.g., 3.12]
 
@@ -43,7 +43,7 @@ What actually happened instead.
 # Enable debug logging in Home Assistant config:
 # logger:
 #   logs:
-#     custom_components.clockwork: debug
+#     custom_components.zone_label_trigger: debug
 ```
 
 ## Screenshots
