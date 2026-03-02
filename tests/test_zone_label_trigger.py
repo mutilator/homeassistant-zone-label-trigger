@@ -1,6 +1,7 @@
 """Unit tests for the zone_label_trigger helper functions."""
 
 from types import SimpleNamespace
+from unittest.mock import Mock
 
 from custom_components.zone_label_trigger import trigger
 
@@ -34,7 +35,7 @@ def test_get_matching_zone_entity_ids_filters_by_label(hass):
 
     # Create label and attach to the registry entry
     label = lr.async_get(hass).async_create("Work")
-    ent_reg.async_update_entity(entry.entity_id, labels=[label.label_id])
+    ent_reg.async_update_entity(entry.entity_id, labels={label.label_id})
 
     matches = trigger._get_matching_zone_entity_ids(hass, "work")
     assert matches == ["zone.one"]
@@ -46,7 +47,8 @@ import pytest
 @pytest.mark.asyncio
 async def test_async_get_trigger_capabilities():
     """async_get_trigger_capabilities returns UI field/select metadata."""
-    caps = await trigger.async_get_trigger_capabilities(None, {"platform": "zone_label", "target": {"label_id": "work"}})
+    mock_hass = Mock()
+    caps = await trigger.async_get_trigger_capabilities(mock_hass, {"platform": "zone_label", "target": {"label_id": "work"}})
 
     assert "extra_fields" in caps
     extra = caps["extra_fields"]

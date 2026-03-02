@@ -25,7 +25,7 @@ async def test_zone_label_trigger_fires_on_enter(hass):
     zone_id = entry.entity_id
     hass.states.async_set(zone_id, "zone", {"friendly_name": "Work"})
     label = lr.async_get(hass).async_create("Work")
-    ent_reg.async_update_entity(entry.entity_id, labels=[label.label_id])
+    ent_reg.async_update_entity(entry.entity_id, labels={label.label_id})
 
     # Entity starts outside the zone
     hass.states.async_set("device_tracker.alice", "not_home")
@@ -67,7 +67,7 @@ async def test_zone_label_trigger_fires_on_exit(hass):
     zone_id = entry.entity_id
     hass.states.async_set(zone_id, "zone", {"friendly_name": "Work"})
     label = lr.async_get(hass).async_create("Work")
-    ent_reg.async_update_entity(entry.entity_id, labels=[label.label_id])
+    ent_reg.async_update_entity(entry.entity_id, labels={label.label_id})
 
     # Entity starts inside the zone
     hass.states.async_set("device_tracker.bob", "work")
@@ -106,7 +106,7 @@ async def test_zone_label_trigger_unsubscribe_stops_firing(hass):
     zone_id = entry.entity_id
     hass.states.async_set(zone_id, "zone", {"friendly_name": "Work"})
     label = lr.async_get(hass).async_create("Work")
-    ent_reg.async_update_entity(entry.entity_id, labels=[label.label_id])
+    ent_reg.async_update_entity(entry.entity_id, labels={label.label_id})
 
     hass.states.async_set("device_tracker.carol", "not_home")
 
@@ -142,7 +142,7 @@ async def test_zone_label_trigger_with_entity_id_filters(hass):
     zone_id = entry.entity_id
     hass.states.async_set(zone_id, "zone", {"friendly_name": "Work"})
     label = lr.async_get(hass).async_create("Work")
-    ent_reg.async_update_entity(entry.entity_id, labels=[label.label_id])
+    ent_reg.async_update_entity(entry.entity_id, labels={label.label_id})
 
     hass.states.async_set("device_tracker.alice", "not_home")
     hass.states.async_set("device_tracker.bob", "not_home")
@@ -290,13 +290,16 @@ async def test_trigger_description_includes_label_target(hass):
     assert yaml_path.exists()
 
     yaml_data = yaml.safe_load(yaml_path.read_text())
+    assert isinstance(yaml_data, dict)
     assert "zone_label" in yaml_data
-    assert "target" in yaml_data["zone_label"]
-    assert "entity" in yaml_data["zone_label"]["target"]
-    assert "label" not in yaml_data["zone_label"]["target"]
+    zone_label_data = yaml_data["zone_label"]
+    assert isinstance(zone_label_data, dict)
+    assert "target" in zone_label_data
+    assert "entity" in zone_label_data["target"]
+    assert "label" not in zone_label_data["target"]
 
     # the entity selector should allow multiple values (the YAML declares it)
-    fields = yaml_data["zone_label"].get("fields", {})
+    fields = zone_label_data.get("fields", {})
     assert fields["entity_id"]["selector"]["entity"]["multiple"] is True
 
 
@@ -360,8 +363,8 @@ async def test_class_style_exact_schema_triggers(hass):
     hass.states.async_set("zone.my_casino", "zone", {"friendly_name": "Standish Casino"})
     label_shopping = lr.async_get(hass).async_create("shopping")
     label_aldi = lr.async_get(hass).async_create("aldi")
-    ent_reg.async_update_entity(e1.entity_id, labels=[label_shopping.label_id])
-    ent_reg.async_update_entity(e2.entity_id, labels=[label_aldi.label_id])
+    ent_reg.async_update_entity(e1.entity_id, labels={label_shopping.label_id})
+    ent_reg.async_update_entity(e2.entity_id, labels={label_aldi.label_id})
 
     # monitored persons start outside
     hass.states.async_set("person.joe", "not_home")
