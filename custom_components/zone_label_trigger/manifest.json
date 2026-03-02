@@ -1,13 +1,14 @@
 {
   "domain": "zone_label_trigger",
   "name": "Zone Label Trigger",
+  "codeowners": ["@mutilator"],
+  "dependencies": [],
   "documentation": "https://github.com/mutilator/homeassistant-zone-label-trigger",
-  "issue_tracker": "https://github.com/mutilator/homeassistant-zone-label-trigger/issues",
-  "version": "1.0.0",
-  "integration_type": "service",
   "iot_class": "assumed_state",
+  "integration_type": "service",
+  "issue_tracker": "https://github.com/mutilator/homeassistant-zone-label-trigger/issues",
   "quality_scale": "silver",
   "requirements": [],
-  "dependencies": [],
-  "codeowners": ["@mutilator"]
+  "version": "1.0.0"
+  
 }
