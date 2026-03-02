@@ -1,11 +1,13 @@
-<img src="img/icon.png"
+<img src="brands/icon.png"
      alt="Zone Label Trigger icon"
      width="128"
      align="right"
      style="float: right; margin: 10px 0px 20px 20px;" />
 <br/>
-
+<br/>
+<br/>
 [![GitHub release](https://img.shields.io/github/release/mutilator/homeassistant-zone-label-trigger.svg)](https://github.com/mutilator/homeassistant-zone-label-trigger/releases)
+
 
 # Zone Label Trigger
 
@@ -23,10 +25,26 @@ This repository contains a **custom Home Assistant integration** named **Zone La
 - Returns rich trigger data: entity, zone, from_state, to_state, and event
 - Conservative membership matching: compares entity state to zone id, object id, and friendly name (case‑insensitive)
 - Includes extensive unit tests exercising configuration schema and helper logic
+- **Developer helper service**: `zone_label_trigger.move_tracker_to_zone` can move a demo device_tracker into any zone for testing purposes
+
+# Labs integration preview
+
+![New labs integration preview](img/labs-preview.png)
+
+# Configuration preview
+
+![Configuration preview](img/config-preview.png)
+
 
 ## Tests
 
-The repository includes example test cases in `tests/` demonstrating how the trigger is used in automations.
+In addition to the trigger behaviour, the integration exposes a simple
+helper service (`zone_label_trigger.move_tracker_to_zone`) which is registered
+during setup when the integration is loaded.  It is primarily intended for
+unit/integration tests and local development; see the `__init__.py` docstring
+for details.
+
+The repository also includes example test cases in `tests/` demonstrating how the trigger is used in automations.
 
 ### Basic trigger example
 
@@ -35,8 +53,9 @@ trigger:
   - platform: zone_label
     target:
       label_id: "Work"        # or list of labels
-    entity_id: person.alice   # or a list of entities (e.g. `[person.alice, person.bob]`)
-    event: enter
+    options:
+      entity_id: person.alice   # or a list of entities (e.g. `[person.alice, person.bob]`)
+      event: enter
 
 action:
   service: notify.notify
@@ -51,8 +70,9 @@ trigger:
   - platform: zone_label
     target:
       entity_id: [zone.office, zone.warehouse]
-    entity_id: [device_tracker.rucksack, person.bob]   # you can watch multiple entities
-    event: both
+    options:
+      entity_id: [device_tracker.rucksack, person.bob]   # you can watch multiple entities
+      event: both
 ```
 > **Note:** for class-style triggers (UI) the `target` block is separate from the
 > `options` block, but the behaviour is identical.  See `tests/test_zone_label_trigger.py` for examples.
@@ -68,7 +88,7 @@ trigger:
    - **Category**: Integration
 4. Click "Install"
 5. In Home Assistant, go to **Settings > Devices & Services**
-6. Click **Create Automation** and search for "Clockwork"
+6. Click **Create Automation** and search for "Zone Label" or look for the trigger named **Zone Label Trigger**
 7. Follow the setup wizard
 
 ### Manual installation
@@ -93,6 +113,9 @@ Follow the general Home Assistant custom component development workflow:
    source venv/bin/activate
    ```
 2. Install any dependencies (none required beyond `homeassistant` itself).
+  ```bash
+   python3 -m pip install homeassistant
+   ```
 3. Run the tests:
    ```bash
    python3 -m pytest tests/ -v
