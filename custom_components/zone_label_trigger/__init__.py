@@ -14,9 +14,9 @@ import voluptuous as vol
 from homeassistant.helpers import config_validation as cv
 
 # The integration has no user-configurable YAML options; it is set up
-# via config entries or by presence of an automation trigger.  Providing a
-# schema silences hassfest warnings about missing CONFIG_SCHEMA.
-CONFIG_SCHEMA = cv.config_entry_only_config_schema
+# via config entries or by presence of an automation trigger.
+DOMAIN = "zone_label_trigger"
+CONFIG_SCHEMA = cv.empty_config_schema(DOMAIN)
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -29,8 +29,7 @@ __all__ = ["async_setup"]
 async def async_setup(hass, config: dict[str, Any]) -> bool:
     """Set up the integration.
 
-    Import the trigger module proactively (like `clockwork` imports its
-    `condition` module) so that the trigger platform is registered and any
+    Import the trigger module proactively so that the trigger platform is registered and any
     import errors are surfaced early in logs. Custom integrations that expose
     automation triggers should import the platform module here to aid
     discovery and diagnostics.
@@ -65,7 +64,7 @@ async def async_setup(hass, config: dict[str, Any]) -> bool:
         _LOGGER.exception("Failed to register trigger in hass.data[TRIGGERS]")
 
     # Store marker so integration presence is easy to verify in hass.data
-    hass.data.setdefault("zone_label_trigger", {})
+    hass.data.setdefault(DOMAIN, {})
 
     # --- register helper service for testing/dev ---
     async def _move_demo_tracker_to_zone(call):
@@ -115,7 +114,7 @@ async def async_setup(hass, config: dict[str, Any]) -> bool:
     )
 
     hass.services.async_register(
-        "zone_label_trigger", SERVICE_MOVE_DEMO_TO_ZONE, _move_demo_tracker_to_zone, schema=service_schema
+        DOMAIN, SERVICE_MOVE_DEMO_TO_ZONE, _move_demo_tracker_to_zone, schema=service_schema
     )
 
     return True
@@ -129,7 +128,7 @@ async def async_setup_entry(hass, entry) -> bool:
 async def async_unload_entry(hass, entry) -> bool:
     """Unload a config entry created for this integration."""
     # Remove hass.data marker
-    hass.data.pop("zone_label_trigger", None)
+    hass.data.pop(DOMAIN, None)
 
     # Cleanup TRIGGERS registry entry if present
     try:
@@ -142,7 +141,7 @@ async def async_unload_entry(hass, entry) -> bool:
 
     # Remove our debug/dev service if registered
     try:
-        hass.services.async_remove("zone_label_trigger", SERVICE_MOVE_DEMO_TO_ZONE)
+        hass.services.async_remove(DOMAIN, SERVICE_MOVE_DEMO_TO_ZONE)
     except Exception:
         pass
 
