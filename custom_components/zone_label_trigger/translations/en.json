@@ -10,17 +10,17 @@
         },
         "event": {
           "name": "Event",
-          "description": "Trigger on entities entering, exiting, or both.",
-          "selector": {
-            "event": {
-              "options": {
-                "enter": "Enter",
-                "exit": "Exit",
-                "both": "Both"
-              }
-            }
-          }
+          "description": "Trigger on entities entering, exiting, or both."
         }
+      }
+    }
+  },
+  "selector": {
+    "event": {
+      "options": {
+        "enter": "Enter",
+        "exit": "Exit",
+        "both": "Both"
       }
     }
   }
