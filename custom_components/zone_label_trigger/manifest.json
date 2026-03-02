@@ -4,11 +4,10 @@
   "codeowners": ["@mutilator"],
   "dependencies": [],
   "documentation": "https://github.com/mutilator/homeassistant-zone-label-trigger",
-  "iot_class": "assumed_state",
   "integration_type": "service",
+  "iot_class": "assumed_state",
   "issue_tracker": "https://github.com/mutilator/homeassistant-zone-label-trigger/issues",
   "quality_scale": "silver",
   "requirements": [],
   "version": "1.0.0"
-  
 }

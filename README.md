@@ -1,4 +1,4 @@
-<img src="brands/icon.png"
+<img src="custom_components/zone_label_trigger/brand/icon.png"
      alt="Zone Label Trigger icon"
      width="128"
      align="right"
