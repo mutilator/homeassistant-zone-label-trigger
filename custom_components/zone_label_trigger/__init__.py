@@ -13,6 +13,12 @@ import voluptuous as vol
 
 from homeassistant.helpers import config_validation as cv
 
+# The integration has no user-configurable YAML options; it is set up
+# via config entries or by presence of an automation trigger.  Providing a
+# schema silences hassfest warnings about missing CONFIG_SCHEMA.
+CONFIG_SCHEMA = cv.config_entry_only_config_schema
+
+
 _LOGGER = logging.getLogger(__name__)
 
 SERVICE_MOVE_DEMO_TO_ZONE = "move_tracker_to_zone"
