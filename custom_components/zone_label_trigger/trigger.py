@@ -129,7 +129,11 @@ class ZoneLabelTrigger(Trigger):
         super().__init__(hass, config)
         self._conf = config
 
-    async def async_attach_runner(self, run_action: TriggerActionRunner) -> CALLBACK_TYPE:
+    async def async_attach_runner(
+        self,
+        run_action: TriggerActionRunner,
+        did_not_trigger: Callable[[], None] | None = None,
+    ) -> CALLBACK_TYPE:
         # Debug: show incoming TriggerConfig so we can see whether `target` was
         # set by the automation helper (it must be present for label matching).
         _LOGGER.debug(
@@ -138,6 +142,11 @@ class ZoneLabelTrigger(Trigger):
             self._conf.target,
             self._conf.options,
         )
+
+        # Newer Home Assistant versions pass `did_not_trigger` to
+        # `async_attach_runner`. This trigger currently does not need to use it,
+        # but we accept it to stay API-compatible across HA versions.
+        _ = did_not_trigger
 
         # Reconstruct a raw trigger config dict (as expected by the legacy
         # `async_attach_trigger`) from the TriggerConfig wrapper.
