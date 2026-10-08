@@ -436,6 +436,24 @@ async def test_config_flow_and_entry_setup(hass):
 
 
 @pytest.mark.asyncio
+async def test_config_flow_via_flow_manager_single_instance(hass, enable_custom_integrations):
+    """The flow is reachable from the UI and only one entry may be created."""
+    from homeassistant import config_entries
+
+    result = await hass.config_entries.flow.async_init(
+        "zone_label_trigger", context={"source": config_entries.SOURCE_USER}
+    )
+    assert result["type"] == "create_entry"
+    await hass.async_block_till_done()
+
+    result = await hass.config_entries.flow.async_init(
+        "zone_label_trigger", context={"source": config_entries.SOURCE_USER}
+    )
+    assert result["type"] == "abort"
+    assert result["reason"] == "single_instance_allowed"
+
+
+@pytest.mark.asyncio
 async def test_service_move_demo_tracker_to_zone(hass):
     """Service should move demo device tracker into a zone by copying its coords."""
     from importlib import import_module

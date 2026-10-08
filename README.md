@@ -37,11 +37,8 @@ Labels let you group zones (work sites, stores, family homes, etc.) and write on
 2. Open the menu in the top right and choose **Custom repositories**.
 3. Add `https://github.com/mutilator/homeassistant-zone-label-trigger` with the category **Integration**.
 4. Find **Zone Label Trigger** in HACS and click **Download**.
-5. Add the integration to `configuration.yaml`:
-   ```yaml
-   zone_label_trigger:
-   ```
-6. Restart Home Assistant.
+5. Restart Home Assistant.
+6. Go to **Settings → Devices & services → Add integration**, search for **Zone Label Trigger**, and add it. There is nothing to configure.
 
 ### Manual installation
 
@@ -51,8 +48,8 @@ Labels let you group zones (work sites, stores, family homes, etc.) and write on
    cp -r homeassistant-zone-label-trigger/custom_components/zone_label_trigger \
      /config/custom_components/
    ```
-3. Add `zone_label_trigger:` to `configuration.yaml`.
-4. Restart Home Assistant.
+3. Restart Home Assistant.
+4. Go to **Settings → Devices & services → Add integration** and add **Zone Label Trigger**.
 
 ## Usage
 
@@ -163,7 +160,7 @@ data:
 ├── custom_components/zone_label_trigger/  # the integration
 │   ├── __init__.py               # setup and helper service
 │   ├── trigger.py                # trigger logic
-│   ├── config_flow.py            # minimal config flow (no options)
+│   ├── config_flow.py            # single-entry config flow (no options)
 │   ├── manifest.json
 │   ├── triggers.yaml             # Automation Editor schema
 │   ├── services.yaml             # helper service schema
