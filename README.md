@@ -1,149 +1,179 @@
 <img src="custom_components/zone_label_trigger/brand/icon.png"
      alt="Zone Label Trigger icon"
      width="128"
-     align="right"
-     style="float: right; margin: 10px 0px 20px 20px;" />
-<br/>
-<br/>
-<br/>
-[![GitHub release](https://img.shields.io/github/release/mutilator/homeassistant-zone-label-trigger.svg)](https://github.com/mutilator/homeassistant-zone-label-trigger/releases)
-
+     align="right" />
 
 # Zone Label Trigger
 
-This repository contains a **custom Home Assistant integration** named **Zone Label Trigger**.  It provides a new automation trigger platform called `zone_label` which lets you watch people or device trackers as they enter or exit zones that share a common label.  Labels are managed by Home Assistant's entity/zone registries and make it easy to group arbitrary zones (work, home, school, etc.) without hard‑coding entity IDs.
+[![GitHub release](https://img.shields.io/github/release/mutilator/homeassistant-zone-label-trigger.svg)](https://github.com/mutilator/homeassistant-zone-label-trigger/releases)
+
+A **custom Home Assistant integration** that adds an automation trigger, `zone_label_trigger.zone_label`. It fires when a person or device tracker enters or exits any zone that carries a given **label**.
+
+Labels let you group zones (work sites, stores, family homes, etc.) and write one automation for the whole group, without listing every zone entity ID.
 
 ## Features
 
-- **New automation trigger**: `platform: zone_label`
-- Filter zones by a **label** applied in the entity registry (case‑insensitive)
-- Optional explicit list of zone entity IDs instead of labels
-- Monitored entities can be one or more `person` or `device_tracker` entities (you may supply a single item or a list)
-- Trigger when a monitored entity **enters**, **exits**, or **both**
-- Works with both legacy trigger config and the newer **Trigger class API**
-- Fully integrated with the **Automation Editor** (label selector + event dropdown)
-- Returns rich trigger data: entity, zone, from_state, to_state, and event
-- Conservative membership matching: compares entity state to zone id, object id, and friendly name (case‑insensitive)
-- Includes extensive unit tests exercising configuration schema and helper logic
-- **Developer helper service**: `zone_label_trigger.move_tracker_to_zone` can move a demo device_tracker into any zone for testing purposes
+- New automation trigger: `zone_label_trigger.zone_label`
+- Select zones by one or more **labels** (`target.label_id`), by explicit zone entity IDs (`target.entity_id`), or both
+- Watch one or more `person` or `device_tracker` entities
+- Fire on **enter**, **exit**, or **both**
+- Works in the **Automation Editor** (zone/label target picker, entity picker, event dropdown) and in YAML
+- Label membership is re-checked on every state change, so zones you label later are picked up without reloading the automation
+- Rich trigger data: `entity_id`, `zone`, `event`, `from_state`, `to_state`
+- Developer helper service, `zone_label_trigger.move_tracker_to_zone`, for testing
 
-# Labs integration preview
+## Requirements
 
-![New labs integration preview](img/labs-preview.png)
+- Home Assistant **2025.12** or newer
+- To use the trigger in the Automation Editor, turn on the **New triggers and conditions** preview feature under **Settings → System → Labs**. YAML automations work without it.
 
-# Configuration preview
-
-![Configuration preview](img/config-preview.png)
-
-
-## Tests
-
-In addition to the trigger behaviour, the integration exposes a simple
-helper service (`zone_label_trigger.move_tracker_to_zone`) which is registered
-during setup when the integration is loaded.  It is primarily intended for
-unit/integration tests and local development; see the `__init__.py` docstring
-for details.
-
-The repository also includes example test cases in `tests/` demonstrating how the trigger is used in automations.
-
-### Basic trigger example
-
-```yaml
-trigger:
-  - platform: zone_label
-    target:
-      label_id: "Work"        # or list of labels
-    options:
-      entity_id: person.alice   # or a list of entities (e.g. `[person.alice, person.bob]`)
-      event: enter
-
-action:
-  service: notify.notify
-  data:
-    message: "Alice arrived at a work location"
-```
-
-### Explicit zones instead of labels
-
-```yaml
-trigger:
-  - platform: zone_label
-    target:
-      entity_id: [zone.office, zone.warehouse]
-    options:
-      entity_id: [device_tracker.rucksack, person.bob]   # you can watch multiple entities
-      event: both
-```
-> **Note:** for class-style triggers (UI) the `target` block is separate from the
-> `options` block, but the behaviour is identical.  See `tests/test_zone_label_trigger.py` for examples.
+![Labs integration preview](img/labs-preview.png)
 
 ## Installation
 
-### Via HACS (Recommended)
+### Via HACS (recommended)
 
-1. Open HACS in Home Assistant
-2. Click "Custom repositories" in the top right
-3. Add this repository:
-   - **Repository URL**: `https://github.com/mutilator/homeassistant-zone-label-trigger`
-   - **Category**: Integration
-4. Click "Install"
-5. In Home Assistant, go to **Settings > Devices & Services**
-6. Click **Create Automation** and search for "Zone Label" or look for the trigger named **Zone Label Trigger**
-7. Follow the setup wizard
+1. Open HACS in Home Assistant.
+2. Open the menu in the top right and choose **Custom repositories**.
+3. Add `https://github.com/mutilator/homeassistant-zone-label-trigger` with the category **Integration**.
+4. Find **Zone Label Trigger** in HACS and click **Download**.
+5. Add the integration to `configuration.yaml`:
+   ```yaml
+   zone_label_trigger:
+   ```
+6. Restart Home Assistant.
 
 ### Manual installation
 
 1. Download or clone this repository.
-2. Copy the `custom_components/zone_label_trigger` directory into your
-   Home Assistant `custom_components/` folder:
-   ```
+2. Copy `custom_components/zone_label_trigger` into your Home Assistant `custom_components/` folder:
+   ```bash
    cp -r homeassistant-zone-label-trigger/custom_components/zone_label_trigger \
-     ~/.homeassistant/custom_components/
+     /config/custom_components/
    ```
-3. Restart Home Assistant.
-4. Create automations using the `zone_label` trigger in the UI or YAML.
+3. Add `zone_label_trigger:` to `configuration.yaml`.
+4. Restart Home Assistant.
+
+## Usage
+
+### 1. Label your zones
+
+Go to **Settings → Areas, labels & zones → Zones** and add the same label to each zone you want to group, for example `Work`.
+
+The trigger matches on the **label ID**, not the display name. A label created as `Work` gets the ID `work`. The Automation Editor fills in the ID for you; in YAML, use the ID.
+
+### 2. Create an automation
+
+In the Automation Editor, add a trigger and search for **Zone Trigger**. Pick the label (or zones) as the target, choose who to watch, and choose the event.
+
+![Configuration preview](img/config-preview.png)
+
+### YAML examples
+
+Notify when Alice arrives at any zone labeled `work`:
+
+```yaml
+triggers:
+  - trigger: zone_label_trigger.zone_label
+    target:
+      label_id: work            # or a list: [work, client_sites]
+    options:
+      entity_id: person.alice   # or a list: [person.alice, person.bob]
+      event: enter
+actions:
+  - action: notify.notify
+    data:
+      message: "{{ trigger.entity_id }} arrived at {{ trigger.zone }}"
+```
+
+Use explicit zones instead of labels, and fire on both enter and exit:
+
+```yaml
+triggers:
+  - trigger: zone_label_trigger.zone_label
+    target:
+      entity_id: [zone.office, zone.warehouse]
+    options:
+      entity_id: [device_tracker.rucksack, person.bob]
+      event: both
+```
+
+`label_id` and `entity_id` can be combined in the same `target`.
+
+### Options
+
+| Key | Required | Description |
+| --- | --- | --- |
+| `target.label_id` | One of these two | Label ID, or list of IDs. Every zone with that label is matched. |
+| `target.entity_id` | One of these two | Zone entity ID, or list of IDs. |
+| `options.entity_id` | Yes | `person` or `device_tracker` entity, or a list of them, to watch. |
+| `options.event` | Yes | `enter`, `exit`, or `both`. |
+
+### Trigger data
+
+These variables are available in templates in your actions:
+
+| Variable | Description |
+| --- | --- |
+| `trigger.event` | `enter` or `exit` |
+| `trigger.entity_id` | The person or device tracker that moved |
+| `trigger.zone` | The matched zone's entity ID |
+| `trigger.from_state` | The entity's previous state object |
+| `trigger.to_state` | The entity's new state object |
+
+### How zone membership is decided
+
+An entity counts as "in" a zone when its state matches the zone's entity ID (`zone.office`), object ID (`office`), or friendly name (`Office`). The comparison ignores case. A `person` or `device_tracker` at home has the state `home`, which matches `zone.home`.
+
+## Helper service
+
+`zone_label_trigger.move_tracker_to_zone` sets a `device_tracker` entity's state and GPS attributes to match a zone. It is meant for testing automations and local development.
+
+```yaml
+action: zone_label_trigger.move_tracker_to_zone
+data:
+  zone: zone.office
+  entity_id: device_tracker.demo_paulus
+```
 
 ## Development
 
-The integration has a fairly small codebase and a focused unit test suite.
-Follow the general Home Assistant custom component development workflow:
-
-1. Activate the Python virtual environment used for testing:
+1. Create and activate a virtual environment:
    ```bash
+   python3 -m venv venv
    source venv/bin/activate
    ```
-2. Install any dependencies (none required beyond `homeassistant` itself).
-  ```bash
-   python3 -m pip install homeassistant
+2. Install the test dependencies:
+   ```bash
+   python3 -m pip install -r requirements.txt
    ```
 3. Run the tests:
    ```bash
    python3 -m pytest tests/ -v
-   # or run only the trigger tests
-   python3 -m pytest tests/test_zone_label_trigger.py -k zone_label -v
+   # or only the trigger tests
+   python3 -m pytest tests/test_zone_label_trigger.py -v
    ```
 
-> **Testing tip:** give pytest a timeout of at least 120 seconds; the HA test
-> fixtures take a moment to initialize.
+> **Testing tip:** allow pytest at least 120 seconds. The Home Assistant test fixtures take a while to start.
 
-## Repository Layout
+### Repository layout
 
 ```
 /
-├── custom_components/zone_label_trigger/  # integration implementation
-│   ├── __init__.py
-│   ├── trigger.py                # core trigger logic
-│   ├── config_flow.py            # (unused helper example)
+├── custom_components/zone_label_trigger/  # the integration
+│   ├── __init__.py               # setup and helper service
+│   ├── trigger.py                # trigger logic
+│   ├── config_flow.py            # minimal config flow (no options)
 │   ├── manifest.json
-│   ├── triggers.yaml             # UI editor schema
-│   └── translations/en.json      # strings for editor
-└── tests/                          # unit tests
-    ├── test_zone_label_trigger.py
-    ├── test_zone_label_trigger_hass.py
-    ├── test_config_flow_zone_label.py
-    └── test_zone_label_imports.py
+│   ├── triggers.yaml             # Automation Editor schema
+│   ├── services.yaml             # helper service schema
+│   ├── translations/en.json      # editor strings
+│   └── brand/icon.png
+├── tests/
+│   ├── test_zone_label_trigger.py
+│   ├── test_zone_label_trigger_hass.py
+│   ├── test_config_flow_zone_label.py
+│   └── test_zone_label_imports.py
+├── img/                          # README screenshots
+└── hacs.json
 ```
-
----
-
-**Get started** by creating a `zone_label` trigger in your next automation!
